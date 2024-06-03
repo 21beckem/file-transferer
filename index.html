@@ -12,34 +12,36 @@
 
 <body>
 
-    <section id="beginningLoading" style="display: block;">
-        <center>
-            <h1>PeerJS File Transfer</h1>
-            <br>
-            <p>Loading...</p>
-        </center>
+    <section id="MyPeerId" style="display: block;">
+        <div class="centerBox">
+            <center>
+                <div id="qrcode" class="qrcode"></div>
+                <div class="bubble" id="yourPeerCode" style="font-size: small; color: var(--light);"></div>
+                <br>
+                <button id="connectToPeerBtn" class="bubble" onclick="StartConnectToPeer()" disabled="">Connect to another</button>
+            </center>
+        </div>
     </section>
 
-    <section id="MyPeerId">
-        <div id="qrcode"></div>
-        <div id="yourPeerCode"></div>
-        <button onclick="OpenPageSection('ConnectToPeer')">Connect to another</button>
+
+    <section id="ConnectToPeer">
+        <div class="centerBox">
+            <center>
+                <div id="qrcodeScannerPreview" class="qrcode" style="background-color: #ffffff3b;">
+                    <video id="qrScannerPreview"></video>
+                </div>
+            </center>
+        </div>
+
+        <br><br>
+        <input type="text" id="peerIdInput" placeholder="Enter peer ID">
+        <button onclick="attemptConnectToPeer()">Connect</button>
     </section>
 
     
     <section id="FileSending">
         <input type="file" id="fileInput" multiple>
         <button id="sendFileButton">Send File</button>
-    </section>
-
-
-    <section id="ConnectToPeer">
-        <video id="qrScannerPreview"></video>
-        <button onclick="qrScanner.start()">Open QR Scanner</button>
-        <button onclick="qrScanner.stop()">Stop QR Scanner</button>
-        <br><br>
-        <input type="text" id="peerIdInput" placeholder="Enter peer ID">
-        <button onclick="attemptConnectToPeer()">Connect</button>
     </section>
 
 

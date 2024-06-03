@@ -1,5 +1,5 @@
 function _(x) { return document.getElementById(x); }
-
+_('connectToPeerBtn').disabled = true;
 const qrScanner = new QrScanner(
     _('qrScannerPreview'),
     result => {
@@ -7,18 +7,20 @@ const qrScanner = new QrScanner(
         qrScanner.stop();
         attemptConnectToPeer();
     },
-    {
-        highlightScanRegion: true,
-        highlightCodeOutline: true
-    }
+    {}
 );
+function StartConnectToPeer() {
+    OpenPageSection('ConnectToPeer');
+    qrScanner.start();
+}
 
 function OpenPageSection(newSectionId) {
-    _('beginningLoading').style.display = 'none';
     _('MyPeerId').style.display = 'none';
-    _('FileSending').style.display = 'none';
     _('ConnectToPeer').style.display = 'none';
-
+    _('FileSending').style.display = 'none';
+    if (newSectionId != 'ConnectToPeer') {
+        qrScanner.stop();
+    }
     _(newSectionId).style.display = 'block';
 }
 
@@ -32,6 +34,7 @@ peer.on('open', (id) => {
     // create the QR code
     new QRCode(_("qrcode"), id);
     OpenPageSection('MyPeerId');
+    _('connectToPeerBtn').disabled = false;
 });
 
 // Handle incoming connections
