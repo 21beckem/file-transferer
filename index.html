@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="styles.css">
     <script src="qrcode.min.js"></script>
     <script src="qr-scanner.umd.min.js"></script>
+    <script src="circularProgressBar.js"></script>
+    <script src="jsalert.js"></script>
 </head>
 
 <body>
@@ -16,7 +18,7 @@
         <div class="centerBox">
             <center>
                 <div id="qrcode" class="qrcode"></div>
-                <div class="bubble" id="yourPeerCode" style="font-size: small; color: var(--light); transform: translateY(-30px); min-height: 30px; width: calc(100% - 110px)"></div>
+                <div class="bubble" id="yourPeerCode" style="font-size: small; color: var(--light); transform: translateY(-30px); min-height: 30px; width: calc(100% - 110px); max-width: 300px;"></div>
                 <button id="connectToPeerBtn" class="bubble" onclick="StartConnectToPeer()" disabled="">Connect to another</button>
             </center>
         </div>
@@ -29,7 +31,7 @@
                 <div id="qrcodeScannerPreview" class="qrcode" style="background-color: #ffffff3b;">
                     <video id="qrScannerPreview"></video>
                 </div>
-                <input class="bubble" type="text" id="peerIdInput" placeholder="Enter peer ID" style="font-size: small; color: var(--light); width: calc(100% - 110px); transform: translateY(-30px);">
+                <input class="bubble" type="text" id="peerIdInput" placeholder="Enter peer ID" style="font-size: small; color: var(--light); width: calc(100% - 110px); transform: translateY(-30px); max-width: 300px;">
                 <button class="bubble" onclick="attemptConnectToPeer()">Connect</button>
             </center>
         </div>
@@ -37,8 +39,18 @@
 
     
     <section id="FileSending">
-        <input class="bubble" type="file" id="fileInput" multiple>
-        <button class="bubble" id="sendFileButton">Send File</button>
+        <input type="file" id="fileInput" multiple style="display: none;">
+        <div id="progressBarBox" style="display: none;">
+            <div class="progressBar"></div>
+        </div>
+
+        <div class="centerBox">
+            <center>
+                <button class="bubble" id="selectFilesButton" onclick="_('fileInput').click()">Select File(s)</button>
+                <p id="selectFilesText" style="color: var(--gray);"></p>
+                <button class="bubble" id="confirmSendBtn" onclick="sendSelectedFiles()" style="display: none;">Send Selected?</button>
+            </center>
+        </div>
     </section>
 
 

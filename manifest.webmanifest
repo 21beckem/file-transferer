@@ -1,0 +1,15 @@
+{
+    "name": "Nearby Share",
+    "short_name": "Nearby Share",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffe0e0",
+    "theme_color": "#ff8080",
+    "icons": [
+        {
+            "src": "logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

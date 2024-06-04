@@ -13,7 +13,15 @@ function StartConnectToPeer() {
     OpenPageSection('ConnectToPeer');
     qrScanner.start();
 }
-
+let totalFilesToDownload = 0;
+let filesDownloadedSoFar = 0;
+let progressBar = new CircularProgressBar({
+    percent: 100,
+    color: 'var(--dark)',
+    fractionTotal: totalFilesToDownload,
+    pie: 'progressBar',
+    color: '#E91E63'
+});
 function OpenPageSection(newSectionId) {
     _('MyPeerId').style.display = 'none';
     _('ConnectToPeer').style.display = 'none';
@@ -56,9 +64,14 @@ function attemptConnectToPeer() {
 };
 
 // Handle file input and send files
-_('sendFileButton').addEventListener('click', () => {
+function sendSelectedFiles() {
     const fileInput = _('fileInput');
     const files = fileInput.files;
+
+    conn.send({
+        type: 'send start',
+        amount: files.length
+    });
     if (files.length > 0) {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -66,6 +79,7 @@ _('sendFileButton').addEventListener('click', () => {
 
             reader.onload = (event) => {
                 const data = {
+                    type: 'file',
                     filename: file.name,
                     filedata: event.target.result
                 };
@@ -75,9 +89,19 @@ _('sendFileButton').addEventListener('click', () => {
 
             reader.readAsArrayBuffer(file);
         }
+        JSAlert.alert('File(s) sent successfully!', '', JSAlert.Icons.Success);
+        _('confirmSendBtn').style.display = 'none';
     } else {
-        alert('Please select a file to send.');
+        JSAlert.alert('Please select a file to send.', '', JSAlert.Icons.Warning);
     }
+}
+_('fileInput').addEventListener('change', () => {
+    const fileInput = _('fileInput');
+    const files = fileInput.files;
+    console.log(fileInput.files);
+    _('selectFilesButton').innerHTML = `Change Selection`;
+    _('selectFilesText').innerHTML = files.length + ' file(s) Selected';
+    _('confirmSendBtn').style.display = (files.length > 0) ? 'block' : 'none';
 });
 
 // Setup connection event handlers
@@ -93,9 +117,24 @@ function setupConnection() {
 // Handle incoming data
 function handleIncomingData(data) {
     console.log('File received:', data);
-    const blob = new Blob([data.filedata]);
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = data.filename;
-    link.click();
+    if (data.type == 'file') {
+        filesDownloadedSoFar++;
+        progressBar.updateProgress(Math.round((filesDownloadedSoFar / totalFilesToDownload) * 100), totalFilesToDownload);
+        if (filesDownloadedSoFar == totalFilesToDownload) {
+            totalFilesToDownload = 0;
+            filesDownloadedSoFar = 0;
+            JSAlert.alert('All file(s) received successfully!', '', JSAlert.Icons.Success);
+        }
+        _('progressBarBox').style.display = '';
+        const blob = new Blob([data.filedata]);
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = data.filename;
+        link.click();
+    } else if (data.type == 'send start') {
+        _('progressBarBox').style.display = '';
+        totalFilesToDownload += data.amount;
+        progressBar.updateProgress(Math.round((filesDownloadedSoFar / totalFilesToDownload) * 100), totalFilesToDownload);
+        JSAlert.alert('getting ' + data.amount + ' file(s)');
+    }
 }
